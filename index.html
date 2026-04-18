@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000000">
+    <title>Огонёк 🔥</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            background: url("фон.gif") no-repeat center center fixed;
+            background-size: cover;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: -1;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+            touch-action: manipulation;
+        }
+
+        .title {
+            text-align: center;
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(15px);
+            padding: 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 22px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .series {
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+        }
+
+        .series-label {
+            font-size: 18px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .series-num {
+            font-size: 78px;
+            font-weight: 800;
+            line-height: 1;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .character {
+            width: 190px;
+            height: 190px;
+            display: block;
+            margin: 30px auto 15px;
+            animation: float 3s infinite ease-in-out;
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.3));
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-18px); }
+        }
+
+        .pet-name {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 3px 10px rgba(0,0,0,0.4);
+        }
+
+        .card {
+            background: rgba(255,255,255,0.88);
+            backdrop-filter: blur(20px);
+            border-radius: 22px;
+            padding: 18px;
+            margin-top: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            margin-top: 12px;
+            background: #111;
+            color: white;
+            font-weight: 700;
+            font-size: 17px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .locked {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .menu {
+            position: fixed;
+            bottom: -100%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255,255,255,0.98);
+            border-radius: 24px 24px 0 0;
+            padding: 24px 20px 30px;
+            transition: bottom 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .menu.active {
+            bottom: 0;
+        }
+
+        .menu-header {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #111;
+        }
+
+        .pets-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .pet-card {
+            background: rgba(255,255,255,0.9);
+            border-radius: 18px;
+            padding: 12px 10px;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            transition: all 0.25s;
+            cursor: pointer;
+        }
+
+        .pet-card:active {
+            transform: scale(0.94);
+        }
+
+        .pet-card img {
+            width: 110px;
+            height: 110px;
+            object-fit: contain;
+            background: transparent !important;
+            filter: drop-shadow(0 8px 15px rgba(0,0,0,0.25));
+        }
+
+        .pet-card p {
+            margin-top: 8px;
+            font-weight: 700;
+            color: #222;
+            font-size: 17px;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 15px;
+            color: #fff;
+            opacity: 0.9;
+            min-height: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <div class="title">Огонёк 🔥</div>
+
+    <div class="series">
+        <div class="series-label">Серия с другом</div>
+        <div id="series" class="series-num">1</div>
+    </div>
+
+    <img id="character" class="character" src="яйцо.gif">
+
+    <div id="petName" class="pet-name">Без имени</div>
+
+    <div class="card">
+        <button id="nameBtn" class="btn" onclick="setName()">Назвать пета</button>
+        <button id="petBtn" class="btn" onclick="openMenu()">Выбор пета</button>
+    </div>
+
+    <div class="status" id="status"></div>
+</div>
+
+<div id="menu" class="menu">
+    <div class="menu-header">Выбери своего пета</div>
+    <div class="pets-grid">
+        <div class="pet-card" onclick="setPet('кот.gif')"><img src="кот.gif" alt="Кот"><p>🐱 Кот</p></div>
+        <div class="pet-card" onclick="setPet('боб.gif')"><img src="боб.gif" alt="Боб"><p>🧸 Боб</p></div>
+        <div class="pet-card" onclick="setPet('патрик.gif')"><img src="патрик.gif" alt="Патрик"><p>⭐ Патрик</p></div>
+        <div class="pet-card" onclick="setPet('бендер.gif')"><img src="бендер.gif" alt="Бендер"><p>🤖 Бендер</p></div>
+        <div class="pet-card" onclick="setPet('дино.gif')"><img src="дино.gif" alt="Дино"><p>🦖 Дино</p></div>
+    </div>
+    <button onclick="closeMenu()" style="margin-top:25px;width:100%;padding:14px;background:#ddd;color:#111;border:none;border-radius:14px;font-weight:600;">Закрыть</button>
+</div>
+
+<script>
+    // Получаем ref из ссылки (например ?ref=123456789)
+    const urlParams = new URLSearchParams(window.location.search);
+    const refKey = urlParams.get('ref') || 'default';
+
+    let series = parseInt(localStorage.getItem(refKey + "_series")) || 1;
+    let petName = localStorage.getItem(refKey + "_petName") || "Без имени";
+    let currentPet = localStorage.getItem(refKey + "_pet") || "кот.gif";
+    let lastDailyUpdate = localStorage.getItem(refKey + "_lastDailyUpdate") || null;
+
+    function update() {
+        document.getElementById("series").innerText = series;
+        document.getElementById("petName").innerText = petName;
+
+        const char = document.getElementById("character");
+        const petBtn = document.getElementById("petBtn");
+
+        const now = new Date();
+        const currentDate = now.toISOString().split('T')[0];
+        const hour = now.getHours();
+
+        if (lastDailyUpdate !== currentDate && hour >= 23) {
+            series++;
+            lastDailyUpdate = currentDate;
+            localStorage.setItem(refKey + "_lastDailyUpdate", lastDailyUpdate);
+            localStorage.setItem(refKey + "_series", series);
+            
+            char.style.transform = "scale(1.3)";
+            setTimeout(() => { char.style.transform = ""; }, 300);
+            showStatus("Серия +1! 🔥", "lime");
+        }
+
+        if (series < 3) {
+            char.src = "яйцо.gif";
+            petBtn.classList.add("locked");
+            petBtn.innerText = "🔒 Петы с 3 серии";
+        } else {
+            char.src = currentPet;
+            petBtn.classList.remove("locked");
+            petBtn.innerText = "Выбор пета";
+        }
+    }
+
+    function setName() {
+        let name = prompt("Как назвать пета?", petName);
+        if (name && name.trim() !== "") {
+            petName = name.trim();
+            localStorage.setItem(refKey + "_petName", petName);
+            update();
+        }
+    }
+
+    function openMenu() {
+        if (series < 3) return;
+        document.getElementById("menu").classList.add("active");
+    }
+
+    function setPet(pet) {
+        currentPet = pet;
+        localStorage.setItem(refKey + "_pet", pet);
+        document.getElementById("character").src = pet;
+        closeMenu();
+    }
+
+    function closeMenu() {
+        document.getElementById("menu").classList.remove("active");
+    }
+
+    function showStatus(text, color = "#fff") {
+        const statusEl = document.getElementById("status");
+        statusEl.style.color = color;
+        statusEl.innerText = text;
+        setTimeout(() => { statusEl.innerText = ""; }, 4000);
+    }
+
+    // Запуск
+    update();
+    setInterval(update, 30000);
+
+    console.log("%cОгонёк готов! refKey = " + refKey, "color:#ff0; font-size:15px");
+</script>
+
+</body>
+</html>
