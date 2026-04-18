@@ -213,9 +213,7 @@
 <div class="app">
     <div class="title">Огонёк 🔥</div>
 
-    <div id="mainContent">
-        <!-- Контент будет подставляться динамически -->
-    </div>
+    <div id="mainContent"></div>
 
     <div class="status" id="status"></div>
 </div>
@@ -277,7 +275,6 @@ function renderContent() {
         return;
     }
 
-    // Основной интерфейс
     content.innerHTML = `
         <div class="series">
             <div class="series-label">Серия с другом</div>
@@ -302,7 +299,6 @@ function update() {
         return;
     }
 
-    // Обновляем серию и имя
     const seriesEl = document.getElementById("series");
     if (seriesEl) seriesEl.innerText = series;
 
@@ -316,7 +312,6 @@ function update() {
     const currentDate = now.toISOString().split('T')[0];
     const hour = now.getHours();
 
-    // Ежедневный +1 в 23:00
     if (lastDailyUpdate !== currentDate && hour >= 23) {
         series++;
         lastDailyUpdate = currentDate;
@@ -345,14 +340,16 @@ function update() {
     }
 }
 
+// ====================== ПРАВИЛЬНАЯ ФУНКЦИЯ ПРИГЛАШЕНИЯ ======================
 function inviteFriend() {
     if (!myUserId) {
         tg.showAlert("Не удалось получить твой Telegram ID");
         return;
     }
 
-    // Главное исправление — правильная ссылка для выбора чата
     const text = "Присоединяйся ко мне в Огонёк 🔥\nДавай растить серию вместе!";
+
+    // ПРАВИЛЬНАЯ ССЫЛКА (исправлено)
     const shareUrl = `https://t.me/share/url?url=https://t.me/TESTNAVSEEEE181863BOT?startapp=\( {myUserId}&text= \){encodeURIComponent(text)}`;
 
     tg.openTelegramLink(shareUrl);
