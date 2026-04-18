@@ -214,7 +214,7 @@
     <div class="title">Огонёк 🔥</div>
 
     <div id="mainContent">
-        <!-- Здесь будет либо серия, либо placeholder -->
+        <!-- Контент будет подставляться динамически -->
     </div>
 
     <div class="status" id="status"></div>
@@ -241,20 +241,24 @@ tg.expand();
 tg.ready();
 
 const urlParams = new URLSearchParams(window.location.search);
-let refKey = urlParams.get('ref') || urlParams.get('startapp') || tg.initDataUnsafe?.start_param || 'default';
-const myUserId = tg.initDataUnsafe?.user?.id || null;
+let refKey = urlParams.get('ref') || 
+             urlParams.get('startapp') || 
+             tg.initDataUnsafe?.start_param || 
+             'default';
+
+const myUserId = tg.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : null;
 
 console.log("🔑 refKey:", refKey);
 console.log("👤 Мой ID:", myUserId);
 
-// ================== ДАННЫЕ (пока localStorage, позже заменим на общую БД) ==================
+// ================== ДАННЫЕ ==================
 let series = parseInt(localStorage.getItem(refKey + "_series")) || 1;
 let petName = localStorage.getItem(refKey + "_petName") || "Без имени";
 let currentPet = localStorage.getItem(refKey + "_pet") || "кот.gif";
 let lastDailyUpdate = localStorage.getItem(refKey + "_lastDailyUpdate") || null;
 
 function isPaired() {
-    return refKey !== 'default' && myUserId;
+    return refKey !== 'default' && myUserId !== null;
 }
 
 function renderContent() {
@@ -273,7 +277,7 @@ function renderContent() {
         return;
     }
 
-    // Нормальный вид с серией
+    // Основной интерфейс
     content.innerHTML = `
         <div class="series">
             <div class="series-label">Серия с другом</div>
@@ -298,8 +302,12 @@ function update() {
         return;
     }
 
-    document.getElementById("series").innerText = series;
-    document.getElementById("petName").innerText = petName;
+    // Обновляем серию и имя
+    const seriesEl = document.getElementById("series");
+    if (seriesEl) seriesEl.innerText = series;
+
+    const petEl = document.getElementById("petName");
+    if (petEl) petEl.innerText = petName;
 
     const char = document.getElementById("character");
     const petBtn = document.getElementById("petBtn");
@@ -308,6 +316,7 @@ function update() {
     const currentDate = now.toISOString().split('T')[0];
     const hour = now.getHours();
 
+    // Ежедневный +1 в 23:00
     if (lastDailyUpdate !== currentDate && hour >= 23) {
         series++;
         lastDailyUpdate = currentDate;
@@ -338,10 +347,15 @@ function update() {
 
 function inviteFriend() {
     if (!myUserId) {
-        tg.showAlert("Не удалось получить твой ID");
+        tg.showAlert("Не удалось получить твой Telegram ID");
         return;
     }
-    tg.openTelegramLink(`https://t.me/TESTNAVSEEEE181863BOT?startapp=${myUserId}`);
+
+    // Главное исправление — правильная ссылка для выбора чата
+    const text = "Присоединяйся ко мне в Огонёк 🔥\nДавай растить серию вместе!";
+    const shareUrl = `https://t.me/share/url?url=https://t.me/TESTNAVSEEEE181863BOT?startapp=\( {myUserId}&text= \){encodeURIComponent(text)}`;
+
+    tg.openTelegramLink(shareUrl);
 }
 
 function setName() {
@@ -362,7 +376,8 @@ function openMenu() {
 function setPet(pet) {
     currentPet = pet;
     localStorage.setItem(refKey + "_pet", pet);
-    document.getElementById("character").src = pet;
+    const char = document.getElementById("character");
+    if (char) char.src = pet;
     closeMenu();
 }
 
