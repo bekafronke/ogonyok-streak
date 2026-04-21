@@ -239,6 +239,7 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 tg.ready();
 
+// Получаем параметры из URL
 const urlParams = new URLSearchParams(window.location.search);
 let refKey = urlParams.get('ref') || 
              urlParams.get('startapp') || 
@@ -250,14 +251,46 @@ const myUserId = tg.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id)
 console.log("🔑 refKey:", refKey);
 console.log("👤 Мой ID:", myUserId);
 
+// ================== ЛОГИКА СВЯЗИ С ДРУГОМ ==================
+// Если есть реферал и это не я сам - сохраняем связь
+if (refKey !== 'default' && myUserId && refKey !== myUserId) {
+    localStorage.setItem(myUserId + "_partner", refKey);
+    localStorage.setItem(refKey + "_partner", myUserId);
+    console.log("✅ Связь установлена! Партнёр:", refKey);
+}
+
+// Функция получения общего ключа для серии
+function getSeriesKey() {
+    if (!myUserId) return refKey;
+    
+    let partner = localStorage.getItem(myUserId + "_partner");
+    if (partner && partner !== 'default') {
+        // Сортируем ID чтобы ключ был одинаковым для обоих
+        let sortedIds = [myUserId, partner].sort();
+        return sortedIds.join("_");
+    }
+    return myUserId;
+}
+
 // ================== ДАННЫЕ ==================
-let series = parseInt(localStorage.getItem(refKey + "_series")) || 1;
-let petName = localStorage.getItem(refKey + "_petName") || "Без имени";
-let currentPet = localStorage.getItem(refKey + "_pet") || "кот.gif";
-let lastDailyUpdate = localStorage.getItem(refKey + "_lastDailyUpdate") || null;
+let seriesKey = getSeriesKey();
+let series = parseInt(localStorage.getItem(seriesKey + "_series")) || 1;
+let petName = localStorage.getItem(seriesKey + "_petName") || "Без имени";
+let currentPet = localStorage.getItem(seriesKey + "_pet") || "кот.gif";
+let lastDailyUpdate = localStorage.getItem(seriesKey + "_lastDailyUpdate") || null;
+
+// Функция сохранения всех данных
+function saveAllData() {
+    localStorage.setItem(seriesKey + "_series", series);
+    localStorage.setItem(seriesKey + "_petName", petName);
+    localStorage.setItem(seriesKey + "_pet", currentPet);
+    localStorage.setItem(seriesKey + "_lastDailyUpdate", lastDailyUpdate);
+}
 
 function isPaired() {
-    return refKey !== 'default' && myUserId !== null;
+    if (!myUserId) return false;
+    let partner = localStorage.getItem(myUserId + "_partner");
+    return partner && partner !== 'default';
 }
 
 function renderContent() {
@@ -300,6 +333,9 @@ function update() {
         return;
     }
 
+    // Обновляем ключ серии (на случай если появился партнёр)
+    seriesKey = getSeriesKey();
+    
     const seriesEl = document.getElementById("series");
     if (seriesEl) seriesEl.innerText = series;
 
@@ -316,8 +352,7 @@ function update() {
     if (lastDailyUpdate !== currentDate && hour >= 23) {
         series++;
         lastDailyUpdate = currentDate;
-        localStorage.setItem(refKey + "_lastDailyUpdate", lastDailyUpdate);
-        localStorage.setItem(refKey + "_series", series);
+        saveAllData();
         
         if (char) {
             char.style.transform = "scale(1.3)";
@@ -363,7 +398,7 @@ function setName() {
     let name = prompt("Как назвать пета?", petName);
     if (name && name.trim() !== "") {
         petName = name.trim();
-        localStorage.setItem(refKey + "_petName", petName);
+        saveAllData();
         update();
     }
 }
@@ -375,7 +410,7 @@ function openMenu() {
 
 function setPet(pet) {
     currentPet = pet;
-    localStorage.setItem(refKey + "_pet", pet);
+    saveAllData();
     const char = document.getElementById("character");
     if (char) char.src = pet;
     closeMenu();
@@ -397,7 +432,7 @@ renderContent();
 update();
 setInterval(update, 30000);
 
-console.log("%cОгонёк готов! refKey = " + refKey, "color:#ff0; font-size:15px");
+console.log("%cОгонёк готов! seriesKey = " + seriesKey, "color:#ff0; font-size:15px");
 </script>
 
 </body>
