@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Streak</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+}
+
+/* ФОН GIF */
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+
+  background: url("фон.gif") no-repeat center center fixed;
+  background-size: cover;
+}
+
+/* затемнение */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.3);
+  z-index:-1;
+}
+
+/* APP */
+.app{
+  width:100%;
+  max-width:420px;
+  padding:20px;
+}
+
+/* HEADER */
+.title{
+  text-align:center;
+  background:rgba(255,255,255,0.3);
+  backdrop-filter: blur(15px);
+  padding:10px;
+  border-radius:20px;
+  font-weight:600;
+  color:white;
+}
+
+/* СЕРИИ */
+.series{
+  text-align:center;
+  margin-top:15px;
+  color:white;
+}
+
+.series-num{
+  font-size:64px;
+  font-weight:800;
+}
+
+/* ПЕРС */
+.character{
+  width:180px;
+  height:180px;
+  display:block;
+  margin:25px auto;
+  animation:float 3s infinite;
+}
+
+@keyframes float{
+  50%{transform:translateY(-12px);}
+}
+
+/* ИМЯ */
+.pet-name{
+  text-align:center;
+  font-size:20px;
+  font-weight:600;
+  color:white;
+}
+
+/* CARD */
+.card{
+  background:rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  border-radius:20px;
+  padding:15px;
+  margin-top:20px;
+}
+
+/* BUTTON */
+.btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  margin-top:10px;
+  background:black;
+  color:white;
+  font-weight:600;
+}
+
+/* LOCK */
+.locked{
+  opacity:0.5;
+}
+
+/* MENU */
+.menu{
+  position:fixed;
+  bottom:-100%;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:420px;
+  background:white;
+  border-radius:20px 20px 0 0;
+  padding:20px;
+  transition:0.3s;
+}
+
+.menu.active{
+  bottom:0;
+}
+
+.pet{
+  padding:14px;
+  border-bottom:1px solid #eee;
+  font-size:18px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="title">streak 🔥</div>
+
+  <div class="series">
+    <div>Серии</div>
+    <div id="series" class="series-num">1</div>
+  </div>
+
+  <img id="character" class="character" src="яйцо.gif">
+
+  <div id="petName" class="pet-name">Без имени</div>
+
+  <div class="card">
+    <button id="nameBtn" class="btn" onclick="setName()">Назвать пета</button>
+    <button id="petBtn" class="btn" onclick="openMenu()">Выбор пета</button>
+    <button class="btn" onclick="add()">+ активность</button>
+  </div>
+
+</div>
+
+<!-- МЕНЮ -->
+<div id="menu" class="menu">
+  <div class="pet" onclick="setPet('кот.gif')">🐱 Кот</div>
+  <div class="pet" onclick="setPet('боб.gif')">🧸 Боб</div>
+  <div class="pet" onclick="setPet('патрик.gif')">⭐ Патрик</div>
+  <div class="pet" onclick="setPet('бендер.gif')">🤖 Бендер</div>
+  <div class="pet" onclick="setPet('дино.gif')">🦖 Дино</div>
+</div>
+
+<script>
+let series = 1;
+let points = 20;
+
+let currentPet = localStorage.getItem("pet") || "кот.gif";
+let petName = localStorage.getItem("petName") || "Без имени";
+
+/* ОБНОВЛЕНИЕ */
+function update(){
+  document.getElementById("series").innerText = series;
+  document.getElementById("petName").innerText = petName;
+
+  const char = document.getElementById("character");
+  const btn = document.getElementById("petBtn");
+
+  if(series < 3){
+    char.src = "яйцо.gif";
+    btn.classList.add("locked");
+    btn.innerText = "🔒 Петы с 3 серии";
+  } else {
+    char.src = currentPet;
+    btn.classList.remove("locked");
+    btn.innerText = "Выбор пета";
+  }
+}
+
+/* АКТИВНОСТЬ */
+function add(){
+  points += 20;
+
+  if(points >= 100){
+    points = 0;
+    series++;
+
+    const char = document.getElementById("character");
+    char.style.transform = "scale(1.2)";
+    setTimeout(()=>{char.style.transform="";},200);
+  }
+
+  update();
+}
+
+/* ИМЯ */
+function setName(){
+  let name = prompt("Имя пета:");
+
+  if(name){
+    petName = name;
+    localStorage.setItem("petName", name);
+    update();
+  }
+}
+
+/* ПЕТЫ */
+function openMenu(){
+  if(series < 3) return;
+  document.getElementById("menu").classList.add("active");
+}
+
+function setPet(pet){
+  currentPet = pet;
+  localStorage.setItem("pet", pet);
+  document.getElementById("character").src = pet;
+  closeMenu();
+}
+
+function closeMenu(){
+  document.getElementById("menu").classList.remove("active");
+}
+
+update();
+</script>
+
+</body>
+</html>
