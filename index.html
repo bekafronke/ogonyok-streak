@@ -1,438 +1,243 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#000000">
-    <title>Огонёк 🔥</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Streak</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
-        }
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+}
 
-        body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            background: url("фон.gif") no-repeat center center fixed;
-            background-size: cover;
-            overflow: hidden;
-        }
+/* ФОН GIF */
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
 
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.35);
-            z-index: -1;
-        }
+  background: url("фон.gif") no-repeat center center fixed;
+  background-size: cover;
+}
 
-        .app {
-            width: 100%;
-            max-width: 420px;
-            padding: 20px;
-            touch-action: manipulation;
-        }
+/* затемнение */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.3);
+  z-index:-1;
+}
 
-        .title {
-            text-align: center;
-            background: rgba(255,255,255,0.25);
-            backdrop-filter: blur(15px);
-            padding: 12px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 22px;
-            color: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
+/* APP */
+.app{
+  width:100%;
+  max-width:420px;
+  padding:20px;
+}
 
-        .series {
-            text-align: center;
-            margin-top: 20px;
-            color: white;
-        }
+/* HEADER */
+.title{
+  text-align:center;
+  background:rgba(255,255,255,0.3);
+  backdrop-filter: blur(15px);
+  padding:10px;
+  border-radius:20px;
+  font-weight:600;
+  color:white;
+}
 
-        .series-label {
-            font-size: 18px;
-            opacity: 0.9;
-            font-weight: 500;
-        }
+/* СЕРИИ */
+.series{
+  text-align:center;
+  margin-top:15px;
+  color:white;
+}
 
-        .series-num {
-            font-size: 78px;
-            font-weight: 800;
-            line-height: 1;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        }
+.series-num{
+  font-size:64px;
+  font-weight:800;
+}
 
-        .character {
-            width: 190px;
-            height: 190px;
-            display: block;
-            margin: 30px auto 15px;
-            animation: float 3s infinite ease-in-out;
-            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.3));
-        }
+/* ПЕРС */
+.character{
+  width:180px;
+  height:180px;
+  display:block;
+  margin:25px auto;
+  animation:float 3s infinite;
+}
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-18px); }
-        }
+@keyframes float{
+  50%{transform:translateY(-12px);}
+}
 
-        .pet-name {
-            text-align: center;
-            font-size: 22px;
-            font-weight: 700;
-            color: white;
-            text-shadow: 0 3px 10px rgba(0,0,0,0.4);
-        }
+/* ИМЯ */
+.pet-name{
+  text-align:center;
+  font-size:20px;
+  font-weight:600;
+  color:white;
+}
 
-        .card {
-            background: rgba(255,255,255,0.88);
-            backdrop-filter: blur(20px);
-            border-radius: 22px;
-            padding: 18px;
-            margin-top: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-        }
+/* CARD */
+.card{
+  background:rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px);
+  border-radius:20px;
+  padding:15px;
+  margin-top:20px;
+}
 
-        .btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 16px;
-            margin-top: 12px;
-            background: #111;
-            color: white;
-            font-weight: 700;
-            font-size: 17px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: all 0.2s;
-            cursor: pointer;
-        }
+/* BUTTON */
+.btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  margin-top:10px;
+  background:black;
+  color:white;
+  font-weight:600;
+}
 
-        .btn:active {
-            transform: scale(0.96);
-        }
+/* LOCK */
+.locked{
+  opacity:0.5;
+}
 
-        .btn.orange {
-            background: #ff8800;
-        }
+/* MENU */
+.menu{
+  position:fixed;
+  bottom:-100%;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:420px;
+  background:white;
+  border-radius:20px 20px 0 0;
+  padding:20px;
+  transition:0.3s;
+}
 
-        .locked {
-            opacity: 0.5;
-            pointer-events: none;
-        }
+.menu.active{
+  bottom:0;
+}
 
-        .menu {
-            position: fixed;
-            bottom: -100%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 420px;
-            background: rgba(255,255,255,0.98);
-            border-radius: 24px 24px 0 0;
-            padding: 24px 20px 30px;
-            transition: bottom 0.4s cubic-bezier(0.32, 0.72, 0, 1);
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.3);
-            z-index: 1000;
-        }
-
-        .menu.active {
-            bottom: 0;
-        }
-
-        .menu-header {
-            text-align: center;
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #111;
-        }
-
-        .pets-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-        }
-
-        .pet-card {
-            background: rgba(255,255,255,0.9);
-            border-radius: 18px;
-            padding: 12px 10px;
-            text-align: center;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-            transition: all 0.25s;
-            cursor: pointer;
-        }
-
-        .pet-card:active {
-            transform: scale(0.94);
-        }
-
-        .pet-card img {
-            width: 110px;
-            height: 110px;
-            object-fit: contain;
-            filter: drop-shadow(0 8px 15px rgba(0,0,0,0.25));
-        }
-
-        .pet-card p {
-            margin-top: 8px;
-            font-weight: 700;
-            color: #222;
-            font-size: 17px;
-        }
-
-        .status {
-            text-align: center;
-            margin-top: 15px;
-            font-size: 15px;
-            color: #fff;
-            opacity: 0.9;
-            min-height: 24px;
-        }
-
-        .placeholder {
-            text-align: center;
-            font-size: 20px;
-            color: #fff;
-            opacity: 0.85;
-            margin: 50px 20px;
-            line-height: 1.5;
-        }
-    </style>
+.pet{
+  padding:14px;
+  border-bottom:1px solid #eee;
+  font-size:18px;
+}
+</style>
 </head>
+
 <body>
 
 <div class="app">
-    <div class="title">Огонёк 🔥</div>
 
-    <div id="mainContent"></div>
+  <div class="title">streak 🔥</div>
 
-    <div class="status" id="status"></div>
+  <div class="series">
+    <div>Серии</div>
+    <div id="series" class="series-num">1</div>
+  </div>
+
+  <img id="character" class="character" src="яйцо.gif">
+
+  <div id="petName" class="pet-name">Без имени</div>
+
+  <div class="card">
+    <button id="nameBtn" class="btn" onclick="setName()">Назвать пета</button>
+    <button id="petBtn" class="btn" onclick="openMenu()">Выбор пета</button>
+    <button class="btn" onclick="add()">+ активность</button>
+  </div>
+
 </div>
 
+<!-- МЕНЮ -->
 <div id="menu" class="menu">
-    <div class="menu-header">Выбери своего пета</div>
-    <div class="pets-grid">
-        <div class="pet-card" onclick="setPet('кот.gif')"><img src="кот.gif" alt="Кот"><p>🐱 Кот</p></div>
-        <div class="pet-card" onclick="setPet('боб.gif')"><img src="боб.gif" alt="Боб"><p>🧸 Боб</p></div>
-        <div class="pet-card" onclick="setPet('патрик.gif')"><img src="патрик.gif" alt="Патрик"><p>⭐ Патрик</p></div>
-        <div class="pet-card" onclick="setPet('бендер.gif')"><img src="бендер.gif" alt="Бендер"><p>🤖 Бендер</p></div>
-        <div class="pet-card" onclick="setPet('дино.gif')"><img src="дино.gif" alt="Дино"><p>🦖 Дино</p></div>
-    </div>
-    <button onclick="closeMenu()" style="margin-top:25px;width:100%;padding:14px;background:#ddd;color:#111;border:none;border-radius:14px;font-weight:600;cursor:pointer;">Закрыть</button>
+  <div class="pet" onclick="setPet('кот.gif')">🐱 Кот</div>
+  <div class="pet" onclick="setPet('боб.gif')">🧸 Боб</div>
+  <div class="pet" onclick="setPet('патрик.gif')">⭐ Патрик</div>
+  <div class="pet" onclick="setPet('бендер.gif')">🤖 Бендер</div>
+  <div class="pet" onclick="setPet('дино.gif')">🦖 Дино</div>
 </div>
-
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <script>
-// ================== TELEGRAM MINI APP ==================
-const tg = window.Telegram.WebApp;
-tg.expand();
-tg.ready();
+let series = 1;
+let points = 20;
 
-// Получаем параметры из URL
-const urlParams = new URLSearchParams(window.location.search);
-let refKey = urlParams.get('ref') || 
-             urlParams.get('startapp') || 
-             tg.initDataUnsafe?.start_param || 
-             'default';
+let currentPet = localStorage.getItem("pet") || "кот.gif";
+let petName = localStorage.getItem("petName") || "Без имени";
 
-const myUserId = tg.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : null;
+/* ОБНОВЛЕНИЕ */
+function update(){
+  document.getElementById("series").innerText = series;
+  document.getElementById("petName").innerText = petName;
 
-console.log("🔑 refKey:", refKey);
-console.log("👤 Мой ID:", myUserId);
+  const char = document.getElementById("character");
+  const btn = document.getElementById("petBtn");
 
-// ================== ЛОГИКА СВЯЗИ С ДРУГОМ ==================
-// Если есть реферал и это не я сам - сохраняем связь
-if (refKey !== 'default' && myUserId && refKey !== myUserId) {
-    localStorage.setItem(myUserId + "_partner", refKey);
-    localStorage.setItem(refKey + "_partner", myUserId);
-    console.log("✅ Связь установлена! Партнёр:", refKey);
+  if(series < 3){
+    char.src = "яйцо.gif";
+    btn.classList.add("locked");
+    btn.innerText = "🔒 Петы с 3 серии";
+  } else {
+    char.src = currentPet;
+    btn.classList.remove("locked");
+    btn.innerText = "Выбор пета";
+  }
 }
 
-// Функция получения общего ключа для серии
-function getSeriesKey() {
-    if (!myUserId) return refKey;
-    
-    let partner = localStorage.getItem(myUserId + "_partner");
-    if (partner && partner !== 'default') {
-        // Сортируем ID чтобы ключ был одинаковым для обоих
-        let sortedIds = [myUserId, partner].sort();
-        return sortedIds.join("_");
-    }
-    return myUserId;
-}
+/* АКТИВНОСТЬ */
+function add(){
+  points += 20;
 
-// ================== ДАННЫЕ ==================
-let seriesKey = getSeriesKey();
-let series = parseInt(localStorage.getItem(seriesKey + "_series")) || 1;
-let petName = localStorage.getItem(seriesKey + "_petName") || "Без имени";
-let currentPet = localStorage.getItem(seriesKey + "_pet") || "кот.gif";
-let lastDailyUpdate = localStorage.getItem(seriesKey + "_lastDailyUpdate") || null;
-
-// Функция сохранения всех данных
-function saveAllData() {
-    localStorage.setItem(seriesKey + "_series", series);
-    localStorage.setItem(seriesKey + "_petName", petName);
-    localStorage.setItem(seriesKey + "_pet", currentPet);
-    localStorage.setItem(seriesKey + "_lastDailyUpdate", lastDailyUpdate);
-}
-
-function isPaired() {
-    if (!myUserId) return false;
-    let partner = localStorage.getItem(myUserId + "_partner");
-    return partner && partner !== 'default';
-}
-
-function renderContent() {
-    const content = document.getElementById("mainContent");
-
-    if (!isPaired()) {
-        content.innerHTML = `
-            <div class="placeholder">
-                👥 Для начала пригласите друга,<br>
-                с кем будете растить серию вместе 🔥
-            </div>
-            <div class="card">
-                <button class="btn orange" onclick="inviteFriend()">👥 Пригласить друга</button>
-            </div>
-        `;
-        return;
-    }
-
-    content.innerHTML = `
-        <div class="series">
-            <div class="series-label">Серия с другом</div>
-            <div id="series" class="series-num">${series}</div>
-        </div>
-
-        <img id="character" class="character" src="${series < 3 ? 'яйцо.gif' : currentPet}">
-
-        <div id="petName" class="pet-name">${petName}</div>
-
-        <div class="card">
-            <button id="nameBtn" class="btn" onclick="setName()">Назвать пета</button>
-            <button id="petBtn" class="btn" onclick="openMenu()">Выбор пета</button>
-            <button class="btn orange" onclick="inviteFriend()">👥 Пригласить друга</button>
-        </div>
-    `;
-}
-
-function update() {
-    if (!isPaired()) {
-        renderContent();
-        return;
-    }
-
-    // Обновляем ключ серии (на случай если появился партнёр)
-    seriesKey = getSeriesKey();
-    
-    const seriesEl = document.getElementById("series");
-    if (seriesEl) seriesEl.innerText = series;
-
-    const petEl = document.getElementById("petName");
-    if (petEl) petEl.innerText = petName;
+  if(points >= 100){
+    points = 0;
+    series++;
 
     const char = document.getElementById("character");
-    const petBtn = document.getElementById("petBtn");
+    char.style.transform = "scale(1.2)";
+    setTimeout(()=>{char.style.transform="";},200);
+  }
 
-    const now = new Date();
-    const currentDate = now.toISOString().split('T')[0];
-    const hour = now.getHours();
-
-    if (lastDailyUpdate !== currentDate && hour >= 23) {
-        series++;
-        lastDailyUpdate = currentDate;
-        saveAllData();
-        
-        if (char) {
-            char.style.transform = "scale(1.3)";
-            setTimeout(() => { if (char) char.style.transform = ""; }, 300);
-        }
-        showStatus("Серия +1! 🔥", "lime");
-    }
-
-    if (series < 3) {
-        if (char) char.src = "яйцо.gif";
-        if (petBtn) {
-            petBtn.classList.add("locked");
-            petBtn.innerText = "🔒 Петы с 3 серии";
-        }
-    } else {
-        if (char) char.src = currentPet;
-        if (petBtn) {
-            petBtn.classList.remove("locked");
-            petBtn.innerText = "Выбор пета";
-        }
-    }
+  update();
 }
 
-// ================== ИСПРАВЛЕННАЯ ФУНКЦИЯ ПРИГЛАШЕНИЯ ==================
-function inviteFriend() {
-    if (!myUserId) {
-        tg.showAlert("Не удалось получить твой Telegram ID");
-        return;
-    }
+/* ИМЯ */
+function setName(){
+  let name = prompt("Имя пета:");
 
-    const botUsername = "TESTNAVSEEEE181863BOT";
-    const text = "Присоединяйся ко мне в Огонёк 🔥\nДавай растить серию вместе!";
-    
-    // Ссылка на бота с твоим ID как параметр
-    const botLink = `https://t.me/${botUsername}?start=${myUserId}`;
-    
-    // Отправляем ссылку через Telegram Share
-    tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(botLink)}&text=${encodeURIComponent(text)}`);
+  if(name){
+    petName = name;
+    localStorage.setItem("petName", name);
+    update();
+  }
 }
 
-function setName() {
-    if (!isPaired()) return;
-    let name = prompt("Как назвать пета?", petName);
-    if (name && name.trim() !== "") {
-        petName = name.trim();
-        saveAllData();
-        update();
-    }
+/* ПЕТЫ */
+function openMenu(){
+  if(series < 3) return;
+  document.getElementById("menu").classList.add("active");
 }
 
-function openMenu() {
-    if (series < 3 || !isPaired()) return;
-    document.getElementById("menu").classList.add("active");
+function setPet(pet){
+  currentPet = pet;
+  localStorage.setItem("pet", pet);
+  document.getElementById("character").src = pet;
+  closeMenu();
 }
 
-function setPet(pet) {
-    currentPet = pet;
-    saveAllData();
-    const char = document.getElementById("character");
-    if (char) char.src = pet;
-    closeMenu();
+function closeMenu(){
+  document.getElementById("menu").classList.remove("active");
 }
 
-function closeMenu() {
-    document.getElementById("menu").classList.remove("active");
-}
-
-function showStatus(text, color = "#fff") {
-    const statusEl = document.getElementById("status");
-    statusEl.style.color = color;
-    statusEl.innerText = text;
-    setTimeout(() => { statusEl.innerText = ""; }, 4000);
-}
-
-// ================== ЗАПУСК ==================
-renderContent();
 update();
-setInterval(update, 30000);
-
-console.log("%cОгонёк готов! seriesKey = " + seriesKey, "color:#ff0; font-size:15px");
 </script>
 
 </body>
